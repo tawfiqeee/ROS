@@ -55,7 +55,7 @@ int run(int argc, char **argv)
     return 0;
   }
 
- ros::init(argc, argv, "talker");
+ ros::init(argc, argv, "DepthSounder");
  ros::NodeHandle n;
  ros::Publisher depth_pub = n.advertise<std_msgs::Float32>("DepthSounder", 1000);
  ros::Rate loop_rate(10);

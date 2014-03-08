@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 {
 
 
-  ros::init(argc, argv, "listener");
+  ros::init(argc, argv, "controller");
 
   ros::NodeHandle n;
   std_msgs::Int16 thrust_hl, thrust_hr, thrust_vl, thrust_vr;
