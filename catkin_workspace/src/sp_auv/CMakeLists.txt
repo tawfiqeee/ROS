@@ -107,6 +107,7 @@ include_directories(
  add_executable(sp_auv_talker src/sp_auv_talker.cpp)
  add_executable(sp_auv_controller src/sp_auv_controller.cpp)
  add_executable(sp_auv_controller_v2 src/sp_auv_controller_v2.cpp)
+ add_executable(sp_auv_statemachine src/sp_auv_statemachine.cpp)
  add_executable(sp_auv_depth src/sp_auv_depth.cpp)
  add_executable(sp_auv_camera1 src/sp_auv_camera1.cpp)
  add_executable(sp_auv_camera1_ros src/sp_auv_camera1_ros.cpp)
@@ -125,6 +126,10 @@ include_directories(
  )
 
   target_link_libraries(sp_auv_controller_v2
+   ${catkin_LIBRARIES}
+ )
+
+   target_link_libraries(sp_auv_statemachine
    ${catkin_LIBRARIES}
  )
 
