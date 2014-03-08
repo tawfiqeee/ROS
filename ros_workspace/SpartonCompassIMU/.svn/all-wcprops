@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/13/trunk
+END
+SpartonCompass.launch
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/5/trunk/SpartonCompass.launch
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/3/trunk/manifest.xml
+END
+mainpage.dox
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/3/trunk/mainpage.dox
+END
+AHRS-8.launch
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/3/trunk/AHRS-8.launch
+END
+README.md
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/4/trunk/README.md
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/3/trunk/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/clearpathrobotics/SpartonCompassIMU/!svn/ver/3/trunk/Makefile
+END

@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="Sparton3DOF" type="Sparton3DOF.py" name="Sparton3DOF" respawn="true">
+    <param name="port" value="/dev/ttyUSB0" />
+    <param name="baud" value="19200" />
+    <param name="frequency" value="5" />
+  </node>
+</launch>

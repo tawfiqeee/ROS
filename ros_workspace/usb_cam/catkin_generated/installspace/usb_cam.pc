@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: usb_cam
+Description: Description of usb_cam
+Version: 0.1.3
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib 
+Requires: image_transport roscpp std_msgs sensor_msgs self_test camera_info_manager

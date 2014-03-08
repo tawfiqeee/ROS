@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="SpartonCompass" type="SpartonCompass.py" name="SpartonCompass" respawn="true">
+    <param name="port" value="/dev/sensors/ftdi_SP_AHRS-8" />
+    <param name="baud" value="115200" />
+    <param name="frequency" value="10" />
+  </node>
+</launch>

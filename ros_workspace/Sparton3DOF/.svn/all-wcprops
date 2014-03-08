@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk
+END
+AHRS-8_25Hz.launch
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/AHRS-8_25Hz.launch
+END
+SpartonCompass.launch
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/SpartonCompass.launch
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/manifest.xml
+END
+mainpage.dox
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/mainpage.dox
+END
+README.md
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/README.md
+END
+SpartonSP3003D.launch
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/SpartonSP3003D.launch
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/Makefile
+END
+SpartonCompass25Hz.launch
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/clearpathrobotics/SpartonCompass/!svn/ver/2/trunk/SpartonCompass25Hz.launch
+END

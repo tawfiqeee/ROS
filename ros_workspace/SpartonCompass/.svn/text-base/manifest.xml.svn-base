@@ -1,0 +1,20 @@
+<package>
+  <description brief="SpartonCompass">
+
+     Sparton Digital Compass Dirver
+     SP3003 @ 9600 BPS 10HZ
+     GEDC-6 @ 115200 BPS 
+     ARHS-8 @ 115200 BPS
+
+  </description>
+  <author>Administrator</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/SpartonCompass</url>
+  <depend package="geometry_msgs"/>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+
+</package>
+
+

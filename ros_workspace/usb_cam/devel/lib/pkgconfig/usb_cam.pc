@@ -1,0 +1,8 @@
+prefix=/home/rubaina/ROS/tawfiq/usb_cam/devel
+
+Name: usb_cam
+Description: Description of usb_cam
+Version: 0.1.3
+Cflags: -I/home/rubaina/ROS/tawfiq/usb_cam/include
+Libs: -L/home/rubaina/ROS/tawfiq/usb_cam/devel/lib 
+Requires: image_transport roscpp std_msgs sensor_msgs self_test camera_info_manager
