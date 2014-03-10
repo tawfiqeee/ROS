@@ -98,18 +98,32 @@ int main(int argc, char **argv)
 
     ros::spinOnce();
 
+    if (des_depth != 0.0) 
+    {
+
+
       // Depth Control
       float depth_E = depth - des_depth; //DESIRED_DEPTH;
       
       ROS_INFO("Depth Error: [%2.1f]", depth_E);
 
-      if ((depth_E*depth_E) > ( depth_tolerance * depth_tolerance )) 
-      {
+      //if ((depth_E*depth_E) > ( depth_tolerance * depth_tolerance )) 
+      //{
+        //  thrust_vr.data=thrust_vl.data = clamp((depth_kp * depth_E) + DEPTH_THURST_OFFSET,-THRUST_LIMIT,THRUST_LIMIT);
+
+      //}
+      //else 
+      //{
           thrust_vr.data=thrust_vl.data = clamp((depth_kp * depth_E) + DEPTH_THURST_OFFSET,-THRUST_LIMIT,THRUST_LIMIT);
+    }
+    else
+    {
+      thrust_vr.data=thrust_vl.data=0;
+    }
+      //}
           pub_vr.publish(thrust_vr);
           pub_vl.publish(thrust_vl);
           ROS_INFO("Vert Thrust: [%d]", thrust_vr.data);
-      }
 
       // Heading Control
       float heading_E = heading - des_heading ;//DESIRED_HEADING;
