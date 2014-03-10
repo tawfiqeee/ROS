@@ -28,6 +28,7 @@ float depth_kp;
 float heading_kp;
 float camera_heading_gain;
 float original_heading;
+float time_out;
 double time_since_go;
 
 
@@ -115,8 +116,8 @@ int main(int argc, char **argv)
   nh.param("CamHeadKP",getval,0.1);
   camera_heading_gain = (float) getval;
 
-  nh.param("HeadingKP",getval,3.0);
-  heading_kp = (float) getval;
+  nh.param("TimeOut",getval,600.0);
+  time_out = getval;
 
 
   ros::Rate loop_rate(5);
@@ -139,21 +140,22 @@ int main(int argc, char **argv)
     {
       case 1:
         time_since_go = 0;
-        if(op_mode=="GO")
+        if(op_mode=="GO" || op_mode=="QUAL")
         {
           des_heading.data = heading;
           original_heading = heading;
+          des_depth.data = DEPTH_ST_1;
           state = 2;
-        };
+        }
 
       break;
 
       case 2:
       
-         des_depth.data = DEPTH_ST_1;
          if ( depth > (des_depth.data + depth_tolerance) && depth < (des_depth.data - depth_tolerance) ) 
          {
           des_thrust.data = THRUST_ST_2; 
+          if(op_mode=="QUAL") state = 55;
           state = 3;
          }
 
@@ -195,6 +197,12 @@ int main(int argc, char **argv)
 
       break;
 
+     case 55:
+      
+      //Qualifying, what else to do?
+
+      break; 
+
 
 
 
@@ -204,6 +212,13 @@ int main(int argc, char **argv)
     ROS_INFO("Heading  : [%2.1f]",heading);
     ROS_INFO("Depth    : [%2.1f]", depth);
     ROS_INFO("Des Thr  : [%2.0f]",des_thrust.data);
+
+    if ((int)time_since_go > time_out)
+    {
+      des_depth.data = 2.5;
+      des_thrust.data = 0;
+      exit(0);
+    }
 
     pub_des_dep.publish(des_depth);
     pub_des_thr.publish(des_thrust);

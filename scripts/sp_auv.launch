@@ -1,9 +1,4 @@
 <launch>
-  <node pkg="sp_auv" type="sp_auv_controller" name="sp_auv_controller" respawn="false">
-     <param name="DepthTolerance" type="double" value="0.1" />
-     <param name="DepthKP" type="double" value="-10" />
-     <param name="HeadingKP" type="double" value="3" />
-  </node>
   <node pkg="sp_auv" type="sp_auv_depth" name="sp_auv_depth" respawn="false">
      <param name="port" type="str" value="/dev/ttyUSB0" />
      <param name="baud" type="str" value="9600" />
@@ -15,5 +10,15 @@
   </node>
   <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen">
         <param name="port" value="/dev/ttyACM0" />
+  </node>
+  <node pkg="sp_auv" type="sp_auv_controller" name="sp_auv_controller" respawn="false">
+     <param name="DepthTolerance" type="double" value="0.1" />
+     <param name="DepthKP" type="double" value="-10" />
+     <param name="HeadingKP" type="double" value="3" />
+  </node>
+  <node pkg="sp_auv" type="sp_auv_statemachine" name="sp_auv_statemachine" respawn="false" output="screen">
+     <param name="DepthTolerance" type="double" value="0.1" />
+     <param name="CamHeadKP" type="double" value="0.1" />
+     <param name="TimeOut" type="double" value="600.0" />
   </node>  
 </launch>
