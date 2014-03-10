@@ -9,40 +9,45 @@ Version : PRE ALPHA
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include <string>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include "ros/ros.h"
+#include "std_msgs/String.h"
 #include "std_msgs/Int16.h"
 #include "geometry_msgs/Point32.h"
+#include <boost/lexical_cast.hpp>
 
 //Declarations
 using namespace cv;
 int state = 0;
-int ballrelease = 0;
+int hitflare = 0;
 int count = 0;
-
+bool ifgui = false;
 
 int main(int argc, char **argv)
 {
     //SETUP
-    /*
+    
     ros::init(argc, argv, "auv_camera");
     ros::NodeHandle n;
     ros::Publisher camera_pub_bl = n.advertise<geometry_msgs::Point32>("cam_black", 1000);
     ros::Publisher camera_pub_rd = n.advertise<geometry_msgs::Point32>("cam_red", 1000);
     ros::Publisher camera_pub_yl = n.advertise<geometry_msgs::Point32>("cam_yellow", 1000);
-    ros::Publisher camera_pub_state = n.advertise<std_msgs::Int16>("cam_state", 1000);
+    ros::Publisher camera_pub_state = n.advertise<std_msgs::String>("cam_state", 1000);
     ros::Rate loop_rate(10);
 
-    std_msgs::Int16 cam_state;
+    std_msgs::String cam_state;
     geometry_msgs::Point32 cam_black;
     geometry_msgs::Point32 cam_red;
     geometry_msgs::Point32 cam_yellow;
-    */
+    
     //Initialise Bottom Camera
     FILE * pfile;
-    pfile = fopen("results.txt","w");
+    pfile = fopen("results.txt","a");
+    fprintf(pfile," \n");
+    fprintf(pfile,"Start of test:\n");
     VideoCapture cambottom(0);
     if(!cambottom.isOpened()) //Checking sequence
     {
@@ -58,7 +63,13 @@ int main(int argc, char **argv)
     }
     camfront.set(CV_CAP_PROP_FRAME_WIDTH, 320);
     camfront.set(CV_CAP_PROP_FRAME_HEIGHT, 240);
-    
+
+    int posXblack;
+    int posYblack;
+    int posXred;
+    int posYred;
+    int posXyellow;
+    int posYyellow;
     Mat hsvbottom;
     Mat hsvbottomblack;
     Mat hsvbottomred;
@@ -66,22 +77,25 @@ int main(int argc, char **argv)
     CvMoments hsvblackMoment;
     CvMoments hsvyellowMoment;
     CvMoments hsvredMoment;
-    namedWindow("Original Frame (Bottom)",1);
-    namedWindow("HSV Frame (Bottom)",1);
-    namedWindow("Original Frame (Front)",1);
-    namedWindow("HSV Frame (Front)",1);
-    //cam_state.data=0;
-    //camera_pub_state.publish(cam_state);
+    if(ifgui) namedWindow("Original Frame (Bottom)",1);
+    if(ifgui) namedWindow("[Black] Thresholded Frame (Bottom)",1);
+    if(ifgui) namedWindow("[Red] Thresholded Frame (Bottom)",1);
+    if(ifgui) namedWindow("Original Frame (Front)",1);
+    if(ifgui) namedWindow("Thresholded Frame (Front)",1);
+    cam_state.data="black";
+    camera_pub_state.publish(cam_state);
     while(1)
     {
-        if (state == 0)
+	count += 1;
+        //pfile = fopen("results.txt","w");
+	if (state == 0)
         {
             Mat framebottom;
             cambottom >> framebottom; // Get a new frame from camera
             GaussianBlur(framebottom, framebottom, Size(7,7), 1.5, 1.5);
             cvtColor(framebottom, hsvbottom, CV_BGR2HSV);
             //Black
-            inRange(hsvbottom, Scalar(0, 0, 0), Scalar(102, 194, 30),hsvbottomblack);
+            inRange(hsvbottom, Scalar(0, 0, 0), Scalar(128, 194, 74),hsvbottomblack);
             hsvblackMoment = moments(hsvbottomblack);
             double moment10 = cvGetSpatialMoment(&hsvblackMoment, 1, 0); //X coordinates
             double moment01 = cvGetSpatialMoment(&hsvblackMoment, 0, 1); //Y coordinates
@@ -89,15 +103,17 @@ int main(int argc, char **argv)
             // if the area<1000, then it's probably not wanted
             if(area>1000)
             {
-                // calculate the position of the ball
+                // calculate the position of the blob
                 int posX = moment10/area;
                 int posY = moment01/area;
-                circle(framebottom,cvPoint(posX,posY),5,cvScalar(0,255,255),4);
-                printf("[Black] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
-                fprintf(pfile,"[Black] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
-                //cam_black.x=posX;
-                //cam_black.y=posY;
-                //camera_pub_bl.publish(cam_black);
+		posXblack = posX - 160;
+		posYblack = -(posY - 120);
+                if(ifgui) circle(framebottom,cvPoint(posX,posY),5,cvScalar(0,255,255),4);
+                printf("[Black] X Coordinate = %d. Y Coordinate = %d.\n", posXblack,posYblack);
+                fprintf(pfile,"[Frame Number:%d] [Black] X Coordinate = %d. Y Coordinate = %d.\n", count,posXblack,posYblack);
+                cam_black.x=posXblack;
+                cam_black.y=posYblack;
+                camera_pub_bl.publish(cam_black);
             }
             //Red
             inRange(hsvbottom, Scalar(0, 70, 100), Scalar(5, 255, 255),hsvbottomred);
@@ -106,27 +122,37 @@ int main(int argc, char **argv)
             moment01 = cvGetSpatialMoment(&hsvredMoment, 0, 1); //Y coordinates
             area = cvGetCentralMoment(&hsvredMoment, 0, 0); //Sum of all white color pixels
             // if the area<1000, then it's probably not wanted
+	    //printf("Red Area: %f.\n",area);
             if(area>1000)
             {
-                // calculate the position of the ball
+                // calculate the position of the blob
                 int posX = moment10/area;
                 int posY = moment01/area;
-                circle(framebottom,cvPoint(posX,posY),5,cvScalar(255,255,255),4);
-                printf("[Red] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
-                fprintf(pfile,"[Red] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
-                //cam_red.x=posX;
-                //cam_red.y=posY;
+		posXred = posX - 160;
+		posYred = -(posY - 120);
+                circle(framebottom,cvPoint(posX,posY),5,cvScalar(0,0,0),4);
+                printf("[Red] X Coordinate = %d. Y Coordinate = %d.\n", posXred,posYred);
+                fprintf(pfile,"[Frame Number:%d] [Red] X Coordinate = %d. Y Coordinate = %d.\n", count,posXred,posYred);
+                cam_red.x=posXred;
+                cam_red.y=posYred;
                 //camera_pub_rd.publish(cam_red);
-                if (area>60000)
+                if (area > 70000)
                 {
                     state = 1;
-                    //cam_state.data=1;
-                    //camera_pub_state.publish(cam_state);
+                    cam_state.data="red";
+                    camera_pub_state.publish(cam_state);;
                 }
             }
-            imshow("Original Frame (Bottom)", framebottom);
-            imshow("[Black] Thresholded Frame (Bottom)", hsvbottomblack);
-            imshow("[Red] Thresholded Frame (Bottom)", hsvbottomred);
+            if(ifgui) imshow("Original Frame (Bottom)", framebottom);
+            if(ifgui) imshow("[Black] Thresholded Frame (Bottom)", hsvbottomblack);
+            if(ifgui) imshow("[Red] Thresholded Frame (Bottom)", hsvbottomred);
+	    if(count % 45 == 0)
+	    {
+	        string s = boost::lexical_cast<string>( count );
+	        imwrite("bottomframeori" + s + ".jpg",framebottom);
+		imwrite("bottomframebla" + s + ".jpg",hsvbottomblack);
+		imwrite("bottomframered" + s + ".jpg",hsvbottomred);
+	    }
             if(waitKey(30) >= 0) break;
         }
         
@@ -144,23 +170,38 @@ int main(int argc, char **argv)
                 double moment01 = cvGetSpatialMoment(&hsvyellowMoment, 0, 1); //Y coordinates
                 double area = cvGetCentralMoment(&hsvyellowMoment, 0, 0); //Sum of all white color pixels
                 // if the area<500, then it's probably not wanted.
-                if(area>500)
+                if(area>100)
                 {
-                    // calculate the position of the ball
+                    // calculate the position of the blob
                     int posX = moment10/area;
                     int posY = moment01/area;
+		    posXyellow = posX - 160;
+		    posYyellow = -(posY - 120);
                     circle(framefront,cvPoint(posX,posY),5,cvScalar(0,0,0),4);
-                    printf("[Yellow] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
-                    fprintf(pfile,"[Yellow] X Coordinate = %d. Y Coordinate = %d.\n", posX,posY);
+                    printf("[Yellow] X Coordinate = %d. Y Coordinate = %d.\n", posXyellow,posYyellow);
+		    //printf("Yellow Area is, %f.",area);
+                    fprintf(pfile,"[Frame Number:%d] [Yellow] X Coordinate = %d. Y Coordinate = %d.\n", count,posXyellow,posYyellow);
+		    if(area>19500000)
+		    {
+		    	hitflare = 1;
+			printf("Flare has been hit.");
+		    }
                     //cam_yellow.x=posX;
                     //cam_yellow.y=posY;
                     //camera_pub_yl.publish(cam_yellow);
                 }
-                imshow("Original Frame (Front)", framefront);
-                imshow("Thresholded Frame (Front)", hsvfront);
+                if(ifgui) imshow("Original Frame (Front)", framefront);
+                if(ifgui) imshow("Thresholded Frame (Front)", hsvfront);
+		if(count % 45 == 0)
+		{
+		    string s = boost::lexical_cast<string>( count );
+		    imwrite("frontframeori" + s + ".jpg",framefront);
+		    imwrite("frontframeyel" + s + ".jpg",hsvfront);
+		}
                 if(waitKey(30) >= 0) break;
             }
         }
+	//fclose(pfile);
     }
     // the camera will be deinitialized automatically in VideoCapture destructor
     return 0;
